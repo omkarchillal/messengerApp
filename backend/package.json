@@ -1,0 +1,31 @@
+{
+  "name": "appnexus-chat-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "firebase-admin": "^11.11.1",
+    "mongoose": "^8.19.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "description": "Backend for AppNexus Chat with Firebase Auth + MongoDB",
+  "keywords": [
+    "chat",
+    "firebase",
+    "mongodb",
+    "socket.io"
+  ],
+  "author": "",
+  "license": "ISC"
+}
