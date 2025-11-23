@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import Chat from "./Components/chat.jsx";
 import ChatLogin from "./Components/ChatLogin.jsx";
 import ChatSignup from "./Components/ChatSignup.jsx";
+import ResetPassword from "./Components/ResetPassword.jsx";
 import "./App.css";
 
 /* ✅ Protected Route for Chat */
@@ -41,6 +42,7 @@ function App() {
         />
         <Route path="/chat/login" element={<ChatLogin />} />
         <Route path="/chat/signup" element={<ChatSignup />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/login" element={<ChatLogin />} />
         <Route path="/signup" element={<ChatSignup />} />
 

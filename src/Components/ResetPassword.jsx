@@ -31,7 +31,10 @@ export default function ResetPassword() {
     verifyPasswordResetCode(auth, code)
       .then((emailAddr) => setEmail(emailAddr))
       .catch((err) =>
-        setMessage({ text: err.message || "Invalid reset code.", type: "error" })
+        setMessage({
+          text: err.message || "Invalid reset code.",
+          type: "error",
+        })
       );
   }, [searchParams]);
 
@@ -39,7 +42,10 @@ export default function ResetPassword() {
     e.preventDefault();
     if (!oobCode) return;
     if (!password || password.length < 6) {
-      setMessage({ text: "Password must be at least 6 characters.", type: "error" });
+      setMessage({
+        text: "Password must be at least 6 characters.",
+        type: "error",
+      });
       return;
     }
     if (password !== confirmPassword) {
@@ -72,14 +78,24 @@ export default function ResetPassword() {
       // store and navigate
       localStorage.setItem(
         "currentUser",
-        JSON.stringify({ _id: firebaseUser.uid, uid: firebaseUser.uid, email: firebaseUser.email })
+        JSON.stringify({
+          _id: firebaseUser.uid,
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+        })
       );
       localStorage.setItem("token", token);
 
-      setMessage({ text: "Password reset successful. Redirecting...", type: "success" });
+      setMessage({
+        text: "Password reset successful. Redirecting...",
+        type: "success",
+      });
       setTimeout(() => navigate("/chat"), 1200);
     } catch (err) {
-      setMessage({ text: err.message || "Failed to reset password.", type: "error" });
+      setMessage({
+        text: err.message || "Failed to reset password.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -94,7 +110,11 @@ export default function ResetPassword() {
       >
         <h2 className="text-2xl font-bold mb-2 text-center">Reset Password</h2>
         {message.text && (
-          <div className={`text-sm mb-4 ${message.type === "error" ? "text-red-600" : "text-green-600"}`}>
+          <div
+            className={`text-sm mb-4 ${
+              message.type === "error" ? "text-red-600" : "text-green-600"
+            }`}
+          >
             {message.text}
           </div>
         )}
@@ -103,21 +123,46 @@ export default function ResetPassword() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block mb-1 text-gray-600">Email</label>
-              <input type="email" value={email} readOnly className="w-full px-4 py-2 border rounded-lg bg-gray-100" />
+              <input
+                type="email"
+                value={email}
+                readOnly
+                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
+              />
             </div>
             <div>
               <label className="block mb-1 text-gray-600">New password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border rounded-lg" />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg"
+              />
             </div>
             <div>
-              <label className="block mb-1 text-gray-600">Confirm password</label>
-              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-2 border rounded-lg" />
+              <label className="block mb-1 text-gray-600">
+                Confirm password
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg"
+              />
             </div>
             <div className="flex gap-3">
-              <button type="submit" disabled={loading} className="flex-1 py-2 bg-black text-white rounded-lg">
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 py-2 bg-black text-white rounded-lg"
+              >
                 {loading ? "Saving..." : "Save new password"}
               </button>
-              <button type="button" onClick={() => navigate(-1)} className="flex-1 py-2 border rounded-lg">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="flex-1 py-2 border rounded-lg"
+              >
                 Cancel
               </button>
             </div>
