@@ -9,6 +9,7 @@ import { Fab, Box, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
 import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebase";
+import { getErrorMessage } from "../utils/error";
 import illustration from "../assets/data-analysis-case-study.svg";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE;
@@ -69,8 +70,7 @@ export default function ChatSignup() {
     } catch (err) {
       setAlert({
         open: true,
-        message:
-          err.response?.data?.message || err.message || "Google signup failed",
+        message: getErrorMessage(err) || "Google signup failed",
         severity: "error",
       });
     } finally {
@@ -133,7 +133,7 @@ export default function ChatSignup() {
     } catch (err) {
       setAlert({
         open: true,
-        message: err.response?.data?.message || err.message || "Signup failed",
+        message: getErrorMessage(err) || "Signup failed",
         severity: "error",
       });
     } finally {

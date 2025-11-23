@@ -18,16 +18,16 @@ router.post("/signup", async (req, res) => {
 
         // Validation
         if (!fullName || !email || !password) {
-            return res.status(400).json({ 
-                message: "Full name, email, and password are required" 
+            return res.status(400).json({
+                message: "Full name, email, and password are required"
             });
         }
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ 
-                message: "User with this email already exists" 
+            return res.status(400).json({
+                message: "User with this email already exists"
             });
         }
 
@@ -48,24 +48,24 @@ router.post("/signup", async (req, res) => {
 
         // Return user without password
         const { password: _, ...userWithoutPassword } = user.toObject();
-        res.status(201).json({ 
+        res.status(201).json({
             message: "Signup successful",
             user: userWithoutPassword
         });
     } catch (error) {
         console.error("❌ Error during signup:", error);
-        
+
         // Handle duplicate key errors
         if (error.code === 11000) {
             const field = Object.keys(error.keyPattern)[0];
-            return res.status(400).json({ 
-                message: `A user with this ${field} already exists` 
+            return res.status(400).json({
+                message: `A user with this ${field} already exists`
             });
         }
-        
-        res.status(500).json({ 
-            message: "Error during signup", 
-            error: error.message 
+
+        res.status(500).json({
+            message: "Error during signup",
+            error: error.message
         });
     }
 });
@@ -83,24 +83,24 @@ router.post("/login", async (req, res) => {
 
         // Validation
         if (!email || !password) {
-            return res.status(400).json({ 
-                message: "Email and password are required" 
+            return res.status(400).json({
+                message: "Email and password are required"
             });
         }
 
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ 
-                message: "Invalid email or password" 
+            return res.status(400).json({
+                message: "Invalid email or password"
             });
         }
 
         // Compare passwords
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(400).json({ 
-                message: "Invalid email or password" 
+            return res.status(400).json({
+                message: "Invalid email or password"
             });
         }
 
@@ -112,16 +112,16 @@ router.post("/login", async (req, res) => {
 
         // Return user without password
         const { password: _, ...userWithoutPassword } = user.toObject();
-        res.status(200).json({ 
+        res.status(200).json({
             message: "Login successful",
             user: userWithoutPassword,
             token: "jwt-token-placeholder" // In production, generate real JWT
         });
     } catch (error) {
         console.error("❌ Error during login:", error);
-        res.status(500).json({ 
-            message: "Error during login", 
-            error: error.message 
+        res.status(500).json({
+            message: "Error during login",
+            error: error.message
         });
     }
 });
@@ -137,17 +137,26 @@ router.post("/sync", async (req, res) => {
     try {
         const { uid, fullName, email, photoURL, provider } = req.body;
 
-        if (!uid || !email) {
-            console.log("⚠️ Missing UID or email");
-            return res.status(400).json({ error: "Missing uid or email" });
+        if (!email) {
+            console.log("⚠️ Missing email in sync request");
+            return res.status(400).json({ error: "Missing email" });
         }
 
-        // Check if user exists
-        let user = await User.findOne({ uid });
+        // Prefer finding by uid when provided
+        let user = null;
+        if (uid) {
+            user = await User.findOne({ uid });
+        }
+
+        // If no user by uid, try finding by email (this links pre-existing password users)
+        if (!user) {
+            user = await User.findOne({ email });
+        }
 
         if (user) {
-            // Update existing user
-            console.log(`⚙️ Updating existing user: ${email}`);
+            console.log(`⚙️ Updating existing user record for: ${email}`);
+            // Attach uid if missing
+            if (uid && !user.uid) user.uid = uid;
             user.fullName = fullName || user.fullName;
             user.email = email || user.email;
             user.photoURL = photoURL || user.photoURL;
@@ -159,10 +168,10 @@ router.post("/sync", async (req, res) => {
             return res.status(200).json({ message: "User updated", user });
         }
 
-        // Create new user
+        // No existing user found - create new
         user = new User({
-            uid,
-            fullName,
+            uid: uid || null,
+            fullName: fullName || "",
             email,
             photoURL: photoURL || null,
             provider: provider || "password",
@@ -174,6 +183,11 @@ router.post("/sync", async (req, res) => {
         res.status(201).json({ message: "User created", user });
     } catch (error) {
         console.error("❌ Error syncing user:", error);
+        // Handle duplicate key explicitly
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyPattern || {})[0] || "field";
+            return res.status(400).json({ message: `A user with this ${field} already exists` });
+        }
         res.status(500).json({ message: "Error syncing user", error: error.message });
     }
 });

@@ -59,6 +59,19 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
+// Global error handler - ensure JSON responses for errors
+app.use((err, req, res, next) => {
+    console.error('🔥 Unhandled server error:', err);
+    const status = err.status || 500;
+    const payload = {
+        message: err.message || 'Internal server error',
+    };
+    if (process.env.NODE_ENV !== 'production') {
+        payload.stack = err.stack;
+    }
+    res.status(status).json(payload);
+});
+
 // ---------------- Socket.IO Handling ----------------
 
 // Use Map for cleaner online user management

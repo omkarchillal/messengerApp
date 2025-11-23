@@ -6,7 +6,8 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { IconButton } from "@mui/material";
+import { IconButton, Snackbar, Alert } from "@mui/material";
+import { getErrorMessage } from "../utils/error";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -31,6 +32,11 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState("");
   const [unreadCounts, setUnreadCounts] = useState({});
   const [pendingMessages, setPendingMessages] = useState(0);
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    severity: "error",
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const socket = useRef();
   const messagesEndRef = useRef();
@@ -81,7 +87,8 @@ const Chat = () => {
       const res = await axios.get(`${SOCKET_URL}/api/users`);
       setUsers(res.data.filter((u) => u._id !== currentUser._id));
     } catch (err) {
-      console.error(err);
+      const msg = getErrorMessage(err);
+      setAlert({ open: true, message: msg, severity: "error" });
     }
   };
 
@@ -107,7 +114,8 @@ const Chat = () => {
         });
       }, 50);
     } catch (err) {
-      console.error(err);
+      const msg = getErrorMessage(err);
+      setAlert({ open: true, message: msg, severity: "error" });
     }
   };
 
@@ -126,7 +134,8 @@ const Chat = () => {
       setNewMessage("");
       setPendingMessages(0);
     } catch (err) {
-      console.error(err);
+      const msg = getErrorMessage(err);
+      setAlert({ open: true, message: msg, severity: "error" });
     }
   };
 
@@ -406,6 +415,19 @@ const Chat = () => {
           </>
         )}
       </div>
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={4000}
+        onClose={() => setAlert({ ...alert, open: false })}
+      >
+        <Alert
+          severity={alert.severity}
+          onClose={() => setAlert({ ...alert, open: false })}
+          sx={{ width: "100%" }}
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

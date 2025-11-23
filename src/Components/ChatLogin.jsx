@@ -12,6 +12,7 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebase";
+import { getErrorMessage } from "../utils/error";
 import illustration from "../assets/data-analysis-case-study.svg";
 
 export default function ChatLogin() {
@@ -43,20 +44,15 @@ export default function ChatLogin() {
 
     try {
       setForgotLoading(true);
-      // Use actionCodeSettings to redirect back to the app so user can reset in-app
-      const actionCodeSettings = {
-        url: `${window.location.origin}/reset-password`,
-        handleCodeInApp: true,
-      };
 
-      await sendPasswordResetEmail(
-        auth,
-        forgotEmail.toLowerCase(),
-        actionCodeSettings
-      );
+      // Send password reset email
+      // Note: Firebase will use its hosted page, then redirect back
+      await sendPasswordResetEmail(auth, forgotEmail.toLowerCase());
+
       setAlert({
         open: true,
-        message: "Password reset email sent! Check your inbox.",
+        message:
+          "Password reset email sent! Check your inbox and click the link.",
         severity: "success",
       });
       setShowForgotModal(false);
@@ -64,7 +60,7 @@ export default function ChatLogin() {
     } catch (err) {
       setAlert({
         open: true,
-        message: err.message || "Failed to send password reset email",
+        message: getErrorMessage(err) || "Failed to send password reset email",
         severity: "error",
       });
     } finally {
@@ -121,7 +117,8 @@ export default function ChatLogin() {
     } catch (err) {
       setAlert({
         open: true,
-        message: err.message || "Login failed. Check your credentials.",
+        message:
+          getErrorMessage(err) || "Login failed. Check your credentials.",
         severity: "error",
       });
     } finally {
@@ -268,7 +265,7 @@ export default function ChatLogin() {
               } catch (err) {
                 setAlert({
                   open: true,
-                  message: err.message || "Google login failed",
+                  message: getErrorMessage(err) || "Google login failed",
                   severity: "error",
                 });
               } finally {
