@@ -42,7 +42,12 @@ const Chat = () => {
   const socket = useRef();
   const messagesEndRef = useRef();
   const chatContainerRef = useRef();
+  const usersRef = useRef(users);
   const typingTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    usersRef.current = users;
+  }, [users]);
 
   // Socket.IO
   useEffect(() => {
@@ -84,9 +89,12 @@ const Chat = () => {
         try {
           const shouldNotify = document.hidden || activeChat?._id !== msg.senderId;
           if (shouldNotify) {
-            notifyNewMessage({ senderName: msg.senderName || 'New message', content: msg.content, senderId: msg.senderId });
+            // Prefer the local users list for sender name (fetched from backend).
+            const sender = usersRef.current.find((u) => u._id === msg.senderId) || null;
+            const senderName = sender?.fullName || msg.senderName || "New message";
+            notifyNewMessage({ senderName, content: msg.content, senderId: msg.senderId });
           }
-        } catch (e) {
+        } catch {
           // ignore notification errors
         }
       }
