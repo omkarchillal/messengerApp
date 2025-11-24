@@ -9,6 +9,7 @@ import {
 import { auth } from "../firebase/firebase";
 import { getErrorMessage } from "../utils/error";
 import axios from "axios";
+import { getApiBase } from "../utils/api";
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -101,7 +102,8 @@ export default function ResetPassword() {
 
       // Sync to backend (non-blocking - don't fail if this doesn't work)
       try {
-        await axios.post(`${import.meta.env.VITE_API_BASE}/api/auth/sync`, {
+        const API_BASE_URL = getApiBase();
+        await axios.post(`${API_BASE_URL}/api/auth/sync`, {
           uid: firebaseUser.uid,
           fullName: firebaseUser.displayName || "",
           email: firebaseUser.email,

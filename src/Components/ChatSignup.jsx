@@ -11,8 +11,9 @@ import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebase";
 import { getErrorMessage } from "../utils/error";
 import illustration from "../assets/data-analysis-case-study.svg";
+import { getApiBase } from "../utils/api";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE;
+const API_BASE_URL = getApiBase();
 
 export default function ChatSignup() {
   const [fullName, setFullName] = useState("");

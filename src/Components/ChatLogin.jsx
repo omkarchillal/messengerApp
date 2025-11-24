@@ -14,6 +14,7 @@ import {
 import { auth, googleProvider } from "../firebase/firebase";
 import { getErrorMessage } from "../utils/error";
 import illustration from "../assets/data-analysis-case-study.svg";
+import { getApiBase } from "../utils/api";
 
 export default function ChatLogin() {
   const [email, setEmail] = useState("");
@@ -30,7 +31,7 @@ export default function ChatLogin() {
   });
 
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE;
+  const API_BASE_URL = getApiBase();
 
   const handleForgotPassword = async () => {
     if (!forgotEmail.trim()) {
