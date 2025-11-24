@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import io from "socket.io-client";
 import axios from "axios";
+import { requestNotificationPermission, notifyNewMessage } from "../utils/notifications";
 import { motion, AnimatePresence } from "framer-motion";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -46,6 +47,8 @@ const Chat = () => {
   // Socket.IO
   useEffect(() => {
     if (!currentUser) return;
+    // ensure notifications permission requested once
+    requestNotificationPermission().catch(() => {});
 
     socket.current = io(API_BASE_URL);
     socket.current.emit("join_room", currentUser._id);
@@ -75,6 +78,17 @@ const Chat = () => {
           ...prev,
           [msg.senderId]: prev[msg.senderId] ? prev[msg.senderId] + 1 : 1,
         }));
+        // Show system notification for incoming message from others
+        // Only show when permission granted. If user is not focused or not currently
+        // viewing the same chat, show a notification.
+        try {
+          const shouldNotify = document.hidden || activeChat?._id !== msg.senderId;
+          if (shouldNotify) {
+            notifyNewMessage({ senderName: msg.senderName || 'New message', content: msg.content, senderId: msg.senderId });
+          }
+        } catch (e) {
+          // ignore notification errors
+        }
       }
     });
 
