@@ -337,7 +337,7 @@ const Chat = () => {
         {/* Chat window */}
         {activeChat && (
           <>
-            <div className="hidden md:flex p-4 bg-white border-b shadow-sm flex items-center gap-3 sticky top-0 z-10 h-16">
+            <div className="md:flex p-4 bg-white border-b shadow-sm flex items-center gap-3 sticky top-0 z-10 h-16">
               <IconButton onClick={goBackToList}>
                 <ArrowBackIcon />
               </IconButton>

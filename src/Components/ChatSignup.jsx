@@ -309,7 +309,7 @@ export default function ChatSignup() {
       </div>
 
       {/* Right Section - Illustration (Hidden on Mobile) */}
-      <div className="hidden md:flex w-1/2 items-center justify-center bg-gradient-to-br from-blue-50 to-green-50">
+      <div className="hidden md:flex w-1/2 items-center justify-center bg-linear-to-br from-blue-50 to-green-50">
         <img
           src={illustration}
           alt="Sign up illustration"
