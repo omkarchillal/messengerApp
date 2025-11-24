@@ -1,16 +1,124 @@
-# React + Vite
+# AppNexus Chat
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time chat application built with React, Firebase Authentication, MongoDB, and Socket.IO.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔐 **Authentication**: Email/Password and Google Sign-In via Firebase
+- 💬 **Real-time Messaging**: Instant message delivery using Socket.IO
+- 👥 **Online Status**: See who's online in real-time
+- ⌨️ **Typing Indicators**: Know when someone is typing
+- 🔄 **Password Reset**: Secure password reset via email
+- 📱 **Responsive Design**: Works on desktop and mobile devices
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Frontend
 
-## Expanding the ESLint configuration
+- React 19
+- Vite
+- TailwindCSS
+- Firebase Authentication
+- Socket.IO Client
+- React Router
+- Framer Motion
+- Material-UI
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Backend
+
+- Node.js + Express
+- MongoDB + Mongoose
+- Socket.IO
+- Firebase Admin SDK
+- CORS enabled
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ installed
+- MongoDB Atlas account
+- Firebase project
+
+### Installation
+
+1. **Clone the repository**
+
+```bash
+git clone <your-repo-url>
+cd appnexus
+```
+
+2. **Install frontend dependencies**
+
+```bash
+npm install
+```
+
+3. **Install backend dependencies**
+
+```bash
+cd backend
+npm install
+cd ..
+```
+
+4. **Configure environment variables**
+
+Create `.env` in root:
+
+```env
+VITE_API_BASE=http://localhost:5000
+VITE_GOOGLE_CLIENT_ID=your-google-client-id
+```
+
+Create `backend/.env`:
+
+```env
+PORT=5000
+MONGO_URI=your-mongodb-connection-string
+FRONTEND_URL=http://localhost:5173
+NODE_ENV=development
+```
+
+5. **Run the application**
+
+Terminal 1 (Backend):
+
+```bash
+cd backend
+npm start
+```
+
+Terminal 2 (Frontend):
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:5173`
+
+## Deployment
+
+See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions on deploying to Vercel (frontend) and Render (backend).
+
+## Project Structure
+
+```
+appnexus/
+├── src/                    # Frontend source
+│   ├── Components/         # React components
+│   ├── firebase/          # Firebase configuration
+│   └── utils/             # Utility functions
+├── backend/               # Backend source
+│   ├── config/           # Database configuration
+│   ├── models/           # MongoDB models
+│   ├── routes/           # API routes
+│   └── index.js          # Server entry point
+├── public/               # Static assets
+└── DEPLOYMENT_GUIDE.md   # Deployment instructions
+```
+
+## License
+
+MIT
