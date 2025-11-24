@@ -8,6 +8,7 @@ import messageRoutes from "./routes/messageRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import Message from "./models/Message.js";
+import User from "./models/User.js";
 import connectDB from "./config/db.js";
 
 dotenv.config();
@@ -131,17 +132,26 @@ io.on("connection", (socket) => {
             const newMessage = new Message({ senderId, receiverId, content });
             await newMessage.save();
 
-            // Emit message to receiver if online
-            const receiverSocketId = onlineUsers.get(receiverId);
-            if (receiverSocketId) {
-                io.to(receiverSocketId).emit("receive_message", data);
-            }
+                // Prepare payload and attach sender's fullName when available
+                let payload = newMessage.toObject ? newMessage.toObject() : { ...newMessage };
+                try {
+                    const sender = await User.findById(senderId).select("fullName");
+                    if (sender) payload.senderName = sender.fullName;
+                } catch (e) {
+                    // ignore
+                }
 
-            // Emit back to sender to update sender chat too
-            const senderSocketId = onlineUsers.get(senderId);
-            if (senderSocketId) {
-                io.to(senderSocketId).emit("receive_message", data);
-            }
+                // Emit message to receiver if online
+                const receiverSocketId = onlineUsers.get(receiverId);
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit("receive_message", payload);
+                }
+
+                // Emit back to sender to update sender chat too
+                const senderSocketId = onlineUsers.get(senderId);
+                if (senderSocketId) {
+                    io.to(senderSocketId).emit("receive_message", payload);
+                }
 
         } catch (err) {
             console.error("❌ Error saving message:", err);

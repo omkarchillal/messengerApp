@@ -1,6 +1,7 @@
 // routes/messageRoutes.js
 import express from "express";
 import Message from "../models/Message.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
@@ -49,18 +50,27 @@ router.post("/", async (req, res) => {
             content,
         });
 
+        // Prepare payload and attach sender's fullName when available
+        let payload = msg.toObject ? msg.toObject() : { ...msg };
+        try {
+            const sender = await User.findById(senderId).select("fullName");
+            if (sender) payload.senderName = sender.fullName;
+        } catch (e) {
+            // ignore lookup errors
+        }
+
         // Emit the saved message to the receiver and sender via Socket.IO
         try {
             const io = req.app.get("io");
             if (io) {
-                io.to(receiverId).emit("receive_message", msg);
-                io.to(senderId).emit("receive_message", msg);
+                io.to(receiverId).emit("receive_message", payload);
+                io.to(senderId).emit("receive_message", payload);
             }
         } catch (emitErr) {
             console.error("❌ Error emitting message via Socket.IO:", emitErr);
         }
 
-        res.json(msg);
+        res.json(payload);
     } catch (err) {
         console.error("❌ Error sending message:", err);
         res.status(500).json({ error: "Server error" });
