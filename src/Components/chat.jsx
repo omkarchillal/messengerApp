@@ -14,7 +14,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 dayjs.extend(relativeTime);
 
-const SOCKET_URL = "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 
 const getAvatarUrl = (name) =>
   `https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -47,7 +47,7 @@ const Chat = () => {
   useEffect(() => {
     if (!currentUser) return;
 
-    socket.current = io(SOCKET_URL);
+    socket.current = io(API_BASE_URL);
     socket.current.emit("join_room", currentUser._id);
 
     socket.current.on("get_online_users", setOnlineUsers);
@@ -84,7 +84,7 @@ const Chat = () => {
   // Fetch users
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${SOCKET_URL}/api/users`);
+      const res = await axios.get(`${API_BASE_URL}/api/users`);
       setUsers(res.data.filter((u) => u._id !== currentUser._id));
     } catch (err) {
       const msg = getErrorMessage(err);
@@ -104,7 +104,7 @@ const Chat = () => {
 
     try {
       const res = await axios.get(
-        `${SOCKET_URL}/api/messages/${currentUser._id}/${user._id}`
+        `${API_BASE_URL}/api/messages/${currentUser._id}/${user._id}`
       );
       setMessages(res.data);
       setTimeout(() => {
@@ -130,7 +130,7 @@ const Chat = () => {
     };
 
     try {
-      await axios.post(`${SOCKET_URL}/api/messages`, msg);
+      await axios.post(`${API_BASE_URL}/api/messages`, msg);
       setNewMessage("");
       setPendingMessages(0);
     } catch (err) {
