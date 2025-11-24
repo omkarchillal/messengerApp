@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "build": "cd backend && npm install && npm run build"
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
