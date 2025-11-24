@@ -102,6 +102,19 @@ Visit `http://localhost:5173`
 
 See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions on deploying to Vercel (frontend) and Render (backend).
 
+### Quick Fix: Firebase OAuth Domain Error
+
+If you see "The current domain is not authorized for OAuth operations":
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select your project: **appnexus-4c007**
+3. Go to **Authentication** → **Settings** → **Authorized domains**
+4. Click **Add domain**
+5. Add your Vercel domain: `messenger-app-dun.vercel.app`
+6. Click **Add**
+
+This will enable Google Sign-In and other OAuth operations on your deployed app.
+
 ## Project Structure
 
 ```
