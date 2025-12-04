@@ -146,7 +146,8 @@ export default function ChatSignup() {
     <div className="min-h-screen flex bg-gray-50">
       {/* Left Section - Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-6">
-        <Box
+        {/* Back button - commented out for future use */}
+        {/* <Box
           sx={{ position: "fixed", top: "2rem", left: "2rem", zIndex: 1000 }}
         >
           <Fab
@@ -156,7 +157,7 @@ export default function ChatSignup() {
           >
             <MdArrowBack style={{ marginRight: "0.5rem" }} /> Back
           </Fab>
-        </Box>
+        </Box> */
 
         <motion.div
           className="w-full max-w-md"
